@@ -28,6 +28,30 @@ class ProductController {
       });
     }
   }
+
+  /**
+   * Get top 10 best-selling products
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   */
+  async getTopSoldProducts(req, res) {
+    try {
+      const products = await productService.getTopSoldProducts();
+      
+      res.status(200).json({
+        success: true,
+        data: products,
+        count: products.length,
+      });
+    } catch (error) {
+      console.error('Error in getTopSoldProducts controller:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Internal server error',
+        message: error.message,
+      });
+    }
+  }
 }
 
 module.exports = new ProductController();
