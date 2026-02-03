@@ -118,7 +118,7 @@ The application consists of 8 Sequelize models representing the following entiti
 
 **Constraints:**
 - Unique category names
-- Cannot delete category if products exist (RESTRICT)
+- When category is deleted, products' categoryId is set to NULL (SET NULL)
 
 ---
 

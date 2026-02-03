@@ -44,7 +44,7 @@ Store (N) ◄──────belongsToMany──► Promotion (N)
    Product.belongsTo(Category)
    
    Foreign Key: product.category_id → category.id
-   Cascade: onDelete: RESTRICT, onUpdate: CASCADE
+   Cascade: onDelete: SET NULL, onUpdate: CASCADE
 
 2. PRODUCT ↔ STORE (Many-to-Many via ProductStock)
    ─────────────────────────────────────────────────
