@@ -94,8 +94,6 @@ module.exports = (sequelize, DataTypes) => {
     Promotion.hasMany(models.StorePromotion, {
       foreignKey: 'promotionId',
       as: 'storePromotions',
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
     });
   };
 

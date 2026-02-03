@@ -83,8 +83,6 @@ module.exports = (sequelize, DataTypes) => {
     Product.hasMany(models.ProductStock, {
       foreignKey: 'productId',
       as: 'productStocks',
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
     });
 
     // Product belongs to many Orders through OrderProduct
@@ -99,8 +97,6 @@ module.exports = (sequelize, DataTypes) => {
     Product.hasMany(models.OrderProduct, {
       foreignKey: 'productId',
       as: 'orderProducts',
-      onDelete: 'RESTRICT',
-      onUpdate: 'CASCADE',
     });
   };
 
