@@ -1,0 +1,283 @@
+=================================================================================
+                      SEQUELIZE MODELS - RELATIONSHIPS SUMMARY
+=================================================================================
+
+MODEL STRUCTURE:
+├── category.model.js         (Categories for products)
+├── product.model.js          (Products in catalog)
+├── store.model.js            (Physical store locations)
+├── productStock.model.js     (Product ↔ Store junction)
+├── order.model.js            (Customer orders)
+├── orderProduct.model.js     (Order ↔ Product junction)
+├── promotion.model.js        (Marketing promotions)
+└── storePromotion.model.js   (Store ↔ Promotion junction)
+
+=================================================================================
+                              RELATIONSHIP DIAGRAM
+=================================================================================
+
+Category (1) ──────hasMany──────► Product (N)
+                                      │
+                                      │ belongsToMany (via ProductStock)
+                                      │
+                                      ▼
+Store (N) ◄──────────────────────► Product (N)
+   │                                  │
+   │ (ProductStock)                   │ (OrderProduct)
+   │                                  │
+   │ hasMany                          │ belongsToMany
+   │                                  │
+   ▼                                  ▼
+Order (N)  ◄──────belongsToMany──► Product (N)
+
+
+Store (N) ◄──────belongsToMany──► Promotion (N)
+              (StorePromotion)
+
+=================================================================================
+                           DETAILED ASSOCIATIONS
+=================================================================================
+
+1. CATEGORY → PRODUCT (One-to-Many)
+   ─────────────────────────────────
+   Category.hasMany(Product)
+   Product.belongsTo(Category)
+   
+   Foreign Key: product.category_id → category.id
+   Cascade: onDelete: RESTRICT, onUpdate: CASCADE
+
+2. PRODUCT ↔ STORE (Many-to-Many via ProductStock)
+   ─────────────────────────────────────────────────
+   Product.belongsToMany(Store, { through: ProductStock })
+   Store.belongsToMany(Product, { through: ProductStock })
+   
+   Product.hasMany(ProductStock)
+   Store.hasMany(ProductStock)
+   ProductStock.belongsTo(Product)
+   ProductStock.belongsTo(Store)
+   
+   Foreign Keys:
+   - product_stock.product_id → product.id
+   - product_stock.store_id → store.id
+   
+   Unique: (product_id, store_id)
+   Cascade: CASCADE on delete for both sides
+   Extra Data: quantity (INTEGER, default 0)
+
+3. STORE → ORDER (One-to-Many)
+   ─────────────────────────────
+   Store.hasMany(Order)
+   Order.belongsTo(Store)
+   
+   Foreign Key: order.store_id → store.id
+   Cascade: onDelete: RESTRICT, onUpdate: CASCADE
+
+4. ORDER ↔ PRODUCT (Many-to-Many via OrderProduct)
+   ──────────────────────────────────────────────────
+   Order.belongsToMany(Product, { through: OrderProduct })
+   Product.belongsToMany(Order, { through: OrderProduct })
+   
+   Order.hasMany(OrderProduct)
+   Product.hasMany(OrderProduct)
+   OrderProduct.belongsTo(Order)
+   OrderProduct.belongsTo(Product)
+   
+   Foreign Keys:
+   - order_product.order_id → order.id
+   - order_product.product_id → product.id
+   
+   Cascade: 
+   - Order delete: CASCADE
+   - Product delete: RESTRICT
+   
+   Extra Data:
+   - quantity (INTEGER, min 1)
+   - unit_price (DECIMAL(10,2))
+   - subtotal (DECIMAL(10,2))
+
+5. STORE ↔ PROMOTION (Many-to-Many via StorePromotion)
+   ──────────────────────────────────────────────────────
+   Store.belongsToMany(Promotion, { through: StorePromotion })
+   Promotion.belongsToMany(Store, { through: StorePromotion })
+   
+   Store.hasMany(StorePromotion)
+   Promotion.hasMany(StorePromotion)
+   StorePromotion.belongsTo(Store)
+   StorePromotion.belongsTo(Promotion)
+   
+   Foreign Keys:
+   - store_promotion.store_id → store.id
+   - store_promotion.promotion_id → promotion.id
+   
+   Unique: (store_id, promotion_id)
+   Cascade: CASCADE on delete for both sides
+
+=================================================================================
+                              TABLE STRUCTURE
+=================================================================================
+
+categories
+├── id (PK)
+├── name (UNIQUE, NOT NULL)
+├── description
+├── created_at
+└── updated_at
+
+products
+├── id (PK)
+├── name (NOT NULL)
+├── description
+├── price (DECIMAL(10,2), NOT NULL, >= 0)
+├── category_id (FK → categories.id)
+├── created_at
+└── updated_at
+
+stores
+├── id (PK)
+├── name (NOT NULL)
+├── address
+├── phone
+├── created_at
+└── updated_at
+
+product_stocks
+├── id (PK)
+├── product_id (FK → products.id)
+├── store_id (FK → stores.id)
+├── quantity (INTEGER, DEFAULT 0, >= 0)
+├── created_at
+└── updated_at
+UNIQUE: (product_id, store_id)
+
+orders
+├── id (PK)
+├── order_number (UNIQUE, NOT NULL)
+├── store_id (FK → stores.id)
+├── total_amount (DECIMAL(10,2), NOT NULL, >= 0)
+├── status (ENUM: pending|processing|completed|cancelled, DEFAULT pending)
+├── created_at
+└── updated_at
+
+order_products
+├── id (PK)
+├── order_id (FK → orders.id)
+├── product_id (FK → products.id)
+├── quantity (INTEGER, NOT NULL, >= 1)
+├── unit_price (DECIMAL(10,2), NOT NULL, >= 0)
+├── subtotal (DECIMAL(10,2), NOT NULL, >= 0)
+├── created_at
+└── updated_at
+
+promotions
+├── id (PK)
+├── name (NOT NULL)
+├── description
+├── discount_percent (DECIMAL(5,2), NOT NULL, 0-100)
+├── start_date (DATE, NOT NULL)
+├── end_date (DATE, NOT NULL, > start_date)
+├── created_at
+└── updated_at
+
+store_promotions
+├── id (PK)
+├── store_id (FK → stores.id)
+├── promotion_id (FK → promotions.id)
+├── created_at
+└── updated_at
+UNIQUE: (store_id, promotion_id)
+
+=================================================================================
+                           CASCADE BEHAVIORS
+=================================================================================
+
+Category Delete:
+  └── Products: category_id → NULL (SET NULL)
+
+Product Delete:
+  ├── ProductStocks: DELETED (CASCADE)
+  └── OrderProducts: PREVENTED (RESTRICT)
+
+Store Delete:
+  ├── ProductStocks: DELETED (CASCADE)
+  ├── Orders: PREVENTED (RESTRICT)
+  └── StorePromotions: DELETED (CASCADE)
+
+Order Delete:
+  └── OrderProducts: DELETED (CASCADE)
+
+Promotion Delete:
+  └── StorePromotions: DELETED (CASCADE)
+
+=================================================================================
+                              INDEXES CREATED
+=================================================================================
+
+categories:
+  - UNIQUE: name
+
+products:
+  - INDEX: category_id
+  - INDEX: name
+
+stores:
+  - INDEX: name
+
+product_stocks:
+  - UNIQUE: (product_id, store_id)
+  - INDEX: product_id
+  - INDEX: store_id
+
+orders:
+  - UNIQUE: order_number
+  - INDEX: store_id
+  - INDEX: status
+  - INDEX: created_at
+
+order_products:
+  - INDEX: (order_id, product_id)
+  - INDEX: order_id
+  - INDEX: product_id
+
+promotions:
+  - INDEX: (start_date, end_date)
+  - INDEX: name
+
+store_promotions:
+  - UNIQUE: (store_id, promotion_id)
+  - INDEX: store_id
+  - INDEX: promotion_id
+
+=================================================================================
+                          VALIDATION RULES
+=================================================================================
+
+Category:
+  ✓ name: NOT NULL, UNIQUE, not empty
+
+Product:
+  ✓ name: NOT NULL, not empty
+  ✓ price: NOT NULL, decimal, >= 0
+
+Store:
+  ✓ name: NOT NULL, not empty
+
+ProductStock:
+  ✓ quantity: NOT NULL, integer, >= 0
+
+Order:
+  ✓ orderNumber: NOT NULL, UNIQUE, not empty
+  ✓ totalAmount: NOT NULL, decimal, >= 0
+  ✓ status: ENUM (pending/processing/completed/cancelled)
+
+OrderProduct:
+  ✓ quantity: NOT NULL, integer, >= 1
+  ✓ unitPrice: NOT NULL, decimal, >= 0
+  ✓ subtotal: NOT NULL, decimal, >= 0
+
+Promotion:
+  ✓ name: NOT NULL, not empty
+  ✓ discountPercent: NOT NULL, decimal, 0-100
+  ✓ startDate: NOT NULL, valid date
+  ✓ endDate: NOT NULL, valid date, > startDate
+
+=================================================================================
