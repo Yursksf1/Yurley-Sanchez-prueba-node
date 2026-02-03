@@ -10,4 +10,11 @@ const router = express.Router();
  */
 router.get('/products', productController.getProducts.bind(productController));
 
+/**
+ * @route GET /products/top-sold
+ * @desc Get top 10 best-selling products
+ * @access Public
+ */
+router.get('/products/top-sold', productController.getTopSoldProducts.bind(productController));
+
 module.exports = router;

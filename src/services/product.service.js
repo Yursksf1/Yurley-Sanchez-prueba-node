@@ -1,4 +1,5 @@
-const { Product, ProductStock, Store } = require('../models');
+const { Product, ProductStock, Store, OrderProduct } = require('../models');
+const { Sequelize } = require('sequelize');
 
 /**
  * Product Service
@@ -48,6 +49,49 @@ class ProductService {
       });
     } catch (error) {
       throw new Error(`Error fetching products with stock: ${error.message}`);
+    }
+  }
+
+  /**
+   * Get top 10 best-selling products
+   * @returns {Promise<Array>} List of top 10 products by total units sold
+   */
+  async getTopSoldProducts() {
+    try {
+      const topProducts = await Product.findAll({
+        attributes: [
+          'id',
+          'name',
+          'description',
+          'price',
+          [Sequelize.fn('SUM', Sequelize.col('orderProducts.quantity')), 'totalQuantitySold']
+        ],
+        include: [
+          {
+            model: OrderProduct,
+            as: 'orderProducts',
+            attributes: [],
+          },
+        ],
+        group: ['Product.id'],
+        order: [[Sequelize.literal('totalQuantitySold'), 'DESC']],
+        limit: 10,
+        subQuery: false,
+      });
+
+      // Transform the data to a cleaner structure
+      return topProducts.map((product) => {
+        const plainProduct = product.toJSON();
+        return {
+          id: plainProduct.id,
+          name: plainProduct.name,
+          description: plainProduct.description,
+          price: plainProduct.price,
+          totalQuantitySold: parseInt(plainProduct.totalQuantitySold) || 0,
+        };
+      });
+    } catch (error) {
+      throw new Error(`Error fetching top sold products: ${error.message}`);
     }
   }
 }
