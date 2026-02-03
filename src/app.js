@@ -1,6 +1,7 @@
 const express = require('express');
 const config = require('./config/env');
 const db = require('./models');
+const productRoutes = require('./routes/product.routes');
 
 const app = express();
 
@@ -24,6 +25,9 @@ app.get('/', (req, res) => {
     version: '1.0.0',
   });
 });
+
+// API routes
+app.use(productRoutes);
 
 // Start server
 const startServer = async () => {
