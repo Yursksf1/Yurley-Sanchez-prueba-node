@@ -73,7 +73,7 @@ class ProductService {
             attributes: [],
           },
         ],
-        group: ['Product.id'],
+        group: ['Product.id', 'Product.name', 'Product.description', 'Product.price'],
         order: [[Sequelize.literal('totalQuantitySold'), 'DESC']],
         limit: 10,
         subQuery: false,
