@@ -1,5 +1,48 @@
 # API Endpoints
 
+## Categories
+
+### List Categories with Products
+
+Retrieves categories that have at least one product associated, ordered by the number of products in descending order.
+
+**Endpoint:** `GET /categories/with-products`
+
+**Response Status:** `200 OK`
+
+**Response Format:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Category Name",
+      "description": "Category description",
+      "productCount": 15
+    }
+  ],
+  "count": 1
+}
+```
+
+**Features:**
+- Returns only categories with at least one product
+- Categories are ordered by product count (descending)
+- Uses Sequelize aggregation (COUNT function)
+- Groups results by category
+- Does not use raw SQL
+- Calculated from Product relationship
+
+**Error Response:**
+```json
+{
+  "success": false,
+  "error": "Internal server error",
+  "message": "Error description"
+}
+```
+
 ## Products
 
 ### List Products with Stock per Store

@@ -2,6 +2,7 @@ const express = require('express');
 const config = require('./config/env');
 const db = require('./models');
 const productRoutes = require('./routes/product.routes');
+const categoryRoutes = require('./routes/category.routes');
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.get('/', (req, res) => {
 
 // API routes
 app.use(productRoutes);
+app.use(categoryRoutes);
 
 // Start server
 const startServer = async () => {
