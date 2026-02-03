@@ -87,7 +87,7 @@ class ProductService {
           name: plainProduct.name,
           description: plainProduct.description,
           price: plainProduct.price,
-          totalQuantitySold: parseInt(plainProduct.totalQuantitySold) || 0,
+          totalQuantitySold: parseInt(plainProduct.totalQuantitySold, 10) || 0,
         };
       });
     } catch (error) {
