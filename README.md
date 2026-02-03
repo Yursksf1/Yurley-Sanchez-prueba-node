@@ -2,6 +2,8 @@
 
 Node.js backend API with Express and Sequelize.
 
+[Leer en Español](README.es.md)
+
 ## 🚀 Quick Start
 
 ### Prerequisites
