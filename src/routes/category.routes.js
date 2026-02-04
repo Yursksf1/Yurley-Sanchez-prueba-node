@@ -8,6 +8,6 @@ const router = express.Router();
  * @desc Get categories with at least one product, ordered by product count
  * @access Public
  */
-router.get('/categories/with-products', categoryController.getCategoriesWithProducts.bind(categoryController));
+router.get('/categories/with-products', categoryController.getCategoriesWithProducts);
 
 module.exports = router;
