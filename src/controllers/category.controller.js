@@ -1,4 +1,6 @@
 const categoryService = require('../services/category.service');
+const { asyncHandler } = require('../middleware/errorHandler');
+const { InternalServerError } = require('../utils/errors');
 
 /**
  * Category Controller
@@ -10,24 +12,15 @@ class CategoryController {
    * @param {Object} req - Express request object
    * @param {Object} res - Express response object
    */
-  async getCategoriesWithProducts(req, res) {
-    try {
-      const categories = await categoryService.getCategoriesWithProducts();
-      
-      res.status(200).json({
-        success: true,
-        data: categories,
-        count: categories.length,
-      });
-    } catch (error) {
-      console.error('Error in getCategoriesWithProducts controller:', error);
-      res.status(500).json({
-        success: false,
-        error: 'Internal server error',
-        message: error.message,
-      });
-    }
-  }
+  getCategoriesWithProducts = asyncHandler(async (req, res) => {
+    const categories = await categoryService.getCategoriesWithProducts();
+    
+    res.status(200).json({
+      success: true,
+      data: categories,
+      count: categories.length,
+    });
+  });
 }
 
 module.exports = new CategoryController();
