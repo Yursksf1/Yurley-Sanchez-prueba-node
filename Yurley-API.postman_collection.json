@@ -1,0 +1,99 @@
+{
+  "info": {
+    "name": "Yurley API",
+    "description": "Colección para probar los endpoints principales de la API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Root",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": [""]
+        }
+      }
+    },
+    {
+      "name": "Productos",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/productos",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["productos"]
+        }
+      }
+    },
+    {
+      "name": "Productos Más Vendidos",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/productos/mas-vendidos",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["productos", "mas-vendidos"]
+        }
+      }
+    },
+    {
+      "name": "Promociones",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/promociones?dia=3",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["promociones"],
+          "query": [
+            {
+              "key": "dia",
+              "value": "3"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Categorias",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/categorias",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["categorias"]
+        }
+      }
+    }
+  ]
+}
