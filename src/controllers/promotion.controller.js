@@ -1,4 +1,6 @@
 const promotionService = require('../services/promotion.service');
+const { asyncHandler } = require('../middleware/errorHandler');
+const { BadRequestError, ValidationError } = require('../utils/errors');
 
 /**
  * Promotion Controller
@@ -54,7 +56,29 @@ class PromotionController {
         message: error.message,
       });
     }
-  }
+
+    // Parse and validate day parameter
+    const dayNumber = parseInt(day, 10);
+    
+    if (isNaN(dayNumber)) {
+      throw new ValidationError('Invalid day parameter: must be an integer');
+    }
+
+    if (dayNumber < 1 || dayNumber > 7) {
+      throw new ValidationError(
+        'Invalid day parameter: must be between 1 (Monday) and 7 (Sunday)'
+      );
+    }
+
+    // Fetch promotions from service
+    const promotions = await promotionService.getPromotionsByDay(dayNumber);
+
+    res.status(200).json({
+      success: true,
+      data: promotions,
+      count: promotions.length,
+    });
+  };
 }
 
 module.exports = new PromotionController();

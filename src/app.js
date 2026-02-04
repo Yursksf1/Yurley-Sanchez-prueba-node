@@ -4,6 +4,8 @@ const db = require('./models');
 const productRoutes = require('./routes/product.routes');
 const categoryRoutes = require('./routes/category.routes');
 const promotionRoutes = require('./routes/promotion.routes');
+const { errorHandler } = require('./middleware/errorHandler');
+const notFoundHandler = require('./middleware/notFound');
 
 const app = express();
 
@@ -32,6 +34,12 @@ app.get('/', (req, res) => {
 app.use(productRoutes);
 app.use(categoryRoutes);
 app.use(promotionRoutes);
+
+// 404 handler - must be after all other routes
+app.use(notFoundHandler);
+
+// Global error handler - must be last
+app.use(errorHandler);
 
 // Start server
 const startServer = async () => {
