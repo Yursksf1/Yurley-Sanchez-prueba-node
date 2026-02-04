@@ -5,21 +5,20 @@
  */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    console.log('Ejecutando migración: categories');
-    await queryInterface.createTable('categories', {
-      id: {
+    await queryInterface.createTable('categorias', {
+      id_categoria: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      name: {
-        type: Sequelize.STRING,
+      nombre: {
+        type: Sequelize.STRING(30),
         allowNull: false,
         unique: true,
       },
-      description: {
-        type: Sequelize.TEXT,
+      adultos: {
+        type: Sequelize.INTEGER,
         allowNull: true,
       },
       created_at: {
@@ -33,7 +32,7 @@ module.exports = {
     });
   },
   down: async (queryInterface) => {
-    // Drop categories table
-    await queryInterface.dropTable('categories');
+    // Drop categorias table
+    await queryInterface.dropTable('categorias');
   },
 }

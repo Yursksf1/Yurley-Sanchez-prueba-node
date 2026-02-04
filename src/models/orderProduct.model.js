@@ -4,8 +4,8 @@
  * Tracks products in an order with quantities and prices
  */
 module.exports = (sequelize, DataTypes) => {
-  const OrderProduct = sequelize.define(
-    'OrderProduct',
+  const PedidosProductos = sequelize.define(
+    'PedidosProductos',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -13,98 +13,60 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         allowNull: false,
       },
-      orderId: {
+      cantidad: {
+        type: DataTypes.DECIMAL(9,3).UNSIGNED,
+        allowNull: true,
+      },
+      valor_unitario: {
+        type: DataTypes.DECIMAL(11,3).UNSIGNED,
+        allowNull: true,
+      },
+      valor_unitario_promocion: {
+        type: DataTypes.DECIMAL(11,3).UNSIGNED,
+        allowNull: true,
+      },
+      total_teorico: {
+        type: DataTypes.DECIMAL(12,3).UNSIGNED,
+        allowNull: true,
+      },
+      total_final: {
+        type: DataTypes.DECIMAL(12,3).UNSIGNED,
+        allowNull: true,
+      },
+      id_promocion: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      id_producto: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-          model: 'orders',
-          key: 'id',
-        },
       },
-      productId: {
+      id_pedido: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-          model: 'products',
-          key: 'id',
-        },
-      },
-      quantity: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          isInt: {
-            msg: 'Quantity must be an integer',
-          },
-          min: {
-            args: [1],
-            msg: 'Quantity must be at least 1',
-          },
-        },
-      },
-      unitPrice: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
-        validate: {
-          isDecimal: {
-            msg: 'Unit price must be a valid decimal number',
-          },
-          min: {
-            args: [0],
-            msg: 'Unit price must be greater than or equal to 0',
-          },
-        },
-      },
-      subtotal: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
-        validate: {
-          isDecimal: {
-            msg: 'Subtotal must be a valid decimal number',
-          },
-          min: {
-            args: [0],
-            msg: 'Subtotal must be greater than or equal to 0',
-          },
-        },
       },
     },
     {
-      tableName: 'order_products',
-      timestamps: true,
+      tableName: 'pedidos_productos',
+      timestamps: false,
       underscored: true,
-      indexes: [
-        {
-          fields: ['order_id', 'product_id'],
-          name: 'order_product_idx',
-        },
-        {
-          fields: ['order_id'],
-        },
-        {
-          fields: ['product_id'],
-        },
-      ],
     }
   );
 
-  OrderProduct.associate = (models) => {
-    // OrderProduct belongs to Order
-    OrderProduct.belongsTo(models.Order, {
-      foreignKey: 'orderId',
-      as: 'order',
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
+  PedidosProductos.associate = (models) => {
+    PedidosProductos.belongsTo(models.Promocion, {
+      foreignKey: 'id_promocion',
+      as: 'promocion',
     });
-
-    // OrderProduct belongs to Product
-    OrderProduct.belongsTo(models.Product, {
-      foreignKey: 'productId',
-      as: 'product',
-      onDelete: 'RESTRICT',
-      onUpdate: 'CASCADE',
+    PedidosProductos.belongsTo(models.Producto, {
+      foreignKey: 'id_producto',
+      as: 'producto',
+    });
+    PedidosProductos.belongsTo(models.Pedido, {
+      foreignKey: 'id_pedido',
+      as: 'pedido',
     });
   };
 
-  return OrderProduct;
+  return PedidosProductos;
 };

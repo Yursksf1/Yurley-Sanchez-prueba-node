@@ -7,56 +7,45 @@
  */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('product_stocks', {
+    await queryInterface.createTable('productos_stocks', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      product_id: {
+      id_tienda: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'products',
+          model: 'tiendas',
           key: 'id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      store_id: {
+      id_producto: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'stores',
+          model: 'productos',
           key: 'id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      quantity: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
+      cantidad: {
+        type: Sequelize.DECIMAL(8,3),
+        allowNull: true,
       },
-      created_at: {
-        allowNull: false,
+      fecha_ingreso: {
         type: Sequelize.DATE,
+        allowNull: true,
       },
-      updated_at: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-    });
-    // Add unique constraint for (product_id, store_id)
-    await queryInterface.addConstraint('product_stocks', {
-      fields: ['product_id', 'store_id'],
-      type: 'unique',
-      name: 'unique_product_store',
     });
   },
   down: async (queryInterface) => {
-    // Drop product_stocks table
-    await queryInterface.dropTable('product_stocks');
+    // Drop productos_stocks table
+    await queryInterface.dropTable('productos_stocks');
   },
 }

@@ -1,8 +1,7 @@
 /**
- * Migration for creating the orders table
- * Table: orders
- * Columns: id (PK), order_number (unique), store_id (FK), total_amount, status, timestamps
- * FK: store_id references stores(id), onDelete: RESTRICT, onUpdate: CASCADE
+ * Migration for creating the pedidos table
+ * Table: pedidos
+ * Campos según el diagrama
  */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -22,27 +21,27 @@ module.exports = {
         allowNull: true,
       },
       valor_productos: {
-        type: Sequelize.DECIMAL(12,3),
+        type: Sequelize.DECIMAL(12,3).UNSIGNED,
         allowNull: true,
       },
       valor_envio: {
-        type: Sequelize.DECIMAL(10,3),
+        type: Sequelize.DECIMAL(10,3).UNSIGNED,
         allowNull: true,
       },
       valor_descuento: {
-        type: Sequelize.DECIMAL(12,3),
+        type: Sequelize.DECIMAL(12,3).UNSIGNED,
         allowNull: true,
       },
       valor_cupon: {
-        type: Sequelize.DECIMAL(11,3),
+        type: Sequelize.DECIMAL(11,3).UNSIGNED,
         allowNull: true,
       },
       impuestos: {
-        type: Sequelize.SMALLINT,
+        type: Sequelize.INTEGER,
         allowNull: true,
       },
       valor_final: {
-        type: Sequelize.DECIMAL(12,3),
+        type: Sequelize.DECIMAL(12,3).UNSIGNED,
         allowNull: true,
       },
       calificacion: {
@@ -50,7 +49,7 @@ module.exports = {
         allowNull: true,
       },
       id_tienda: {
-        type: Sequelize.SMALLINT,
+        type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: 'tiendas',

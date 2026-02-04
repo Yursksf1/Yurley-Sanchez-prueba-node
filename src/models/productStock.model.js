@@ -4,8 +4,8 @@
  * Tracks inventory levels of products in stores
  */
 module.exports = (sequelize, DataTypes) => {
-  const ProductStock = sequelize.define(
-    'ProductStock',
+  const ProductosStocks = sequelize.define(
+    'ProductosStocks',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -13,74 +13,40 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         allowNull: false,
       },
-      productId: {
+      id_tienda: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-          model: 'products',
-          key: 'id',
-        },
       },
-      storeId: {
+      id_producto: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-          model: 'stores',
-          key: 'id',
-        },
       },
-      quantity: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-        validate: {
-          isInt: {
-            msg: 'Quantity must be an integer',
-          },
-          min: {
-            args: [0],
-            msg: 'Quantity cannot be negative',
-          },
-        },
+      cantidad: {
+        type: DataTypes.DECIMAL(8,3),
+        allowNull: true,
+      },
+      fecha_ingreso: {
+        type: DataTypes.DATE,
+        allowNull: true,
       },
     },
     {
-      tableName: 'product_stocks',
-      timestamps: true,
+      tableName: 'productos_stocks',
+      timestamps: false,
       underscored: true,
-      indexes: [
-        {
-          unique: true,
-          fields: ['product_id', 'store_id'],
-          name: 'unique_product_store',
-        },
-        {
-          fields: ['product_id'],
-        },
-        {
-          fields: ['store_id'],
-        },
-      ],
     }
   );
 
-  ProductStock.associate = (models) => {
-    // ProductStock belongs to Product
-    ProductStock.belongsTo(models.Product, {
-      foreignKey: 'productId',
-      as: 'product',
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
+  ProductosStocks.associate = (models) => {
+    ProductosStocks.belongsTo(models.Tienda, {
+      foreignKey: 'id_tienda',
+      as: 'tienda',
     });
-
-    // ProductStock belongs to Store
-    ProductStock.belongsTo(models.Store, {
-      foreignKey: 'storeId',
-      as: 'store',
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
+    ProductosStocks.belongsTo(models.Producto, {
+      foreignKey: 'id_producto',
+      as: 'producto',
     });
   };
 
-  return ProductStock;
+  return ProductosStocks;
 };

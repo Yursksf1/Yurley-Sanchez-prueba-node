@@ -7,51 +7,49 @@
  */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('store_promotions', {
+    await queryInterface.createTable('tiendas_promociones', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      store_id: {
+      estado: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      inicio: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      fin: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      id_tienda: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'stores',
+          model: 'tiendas',
           key: 'id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      promotion_id: {
+      id_promocion: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'promotions',
+          model: 'promociones',
           key: 'id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      created_at: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-      updated_at: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-    });
-    // Add unique constraint for (store_id, promotion_id)
-    await queryInterface.addConstraint('store_promotions', {
-      fields: ['store_id', 'promotion_id'],
-      type: 'unique',
-      name: 'unique_store_promotion',
     });
   },
   down: async (queryInterface) => {
-    // Drop store_promotions table
-    await queryInterface.dropTable('store_promotions');
+    // Drop tiendas_promociones table
+    await queryInterface.dropTable('tiendas_promociones');
   },
 }

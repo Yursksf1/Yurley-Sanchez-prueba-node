@@ -3,8 +3,8 @@
  * Represents products in the system
  */
 module.exports = (sequelize, DataTypes) => {
-  const Product = sequelize.define(
-    'Product',
+  const Producto = sequelize.define(
+    'Producto',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -12,93 +12,72 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         allowNull: false,
       },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notEmpty: {
-            msg: 'Product name cannot be empty',
-          },
-        },
-      },
-      description: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-      },
-      price: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
-        validate: {
-          isDecimal: {
-            msg: 'Price must be a valid decimal number',
-          },
-          min: {
-            args: [0],
-            msg: 'Price must be greater than or equal to 0',
-          },
-        },
-      },
-      categoryId: {
+      estado: {
         type: DataTypes.INTEGER,
         allowNull: true,
-        references: {
-          model: 'categories',
-          key: 'id',
-        },
+      },
+      kit: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      barcode: {
+        type: DataTypes.STRING(30),
+        allowNull: true,
+      },
+      nombre: {
+        type: DataTypes.STRING(60),
+        allowNull: false,
+      },
+      presentacion: {
+        type: DataTypes.STRING(25),
+        allowNull: true,
+      },
+      descripcion: {
+        type: DataTypes.STRING(500),
+        allowNull: true,
+      },
+      foto: {
+        type: DataTypes.STRING(120),
+        allowNull: true,
+      },
+      peso: {
+        type: DataTypes.DECIMAL(6,2),
+        allowNull: true,
       },
     },
     {
-      tableName: 'products',
+      tableName: 'productos',
       timestamps: true,
       underscored: true,
-      indexes: [
-        {
-          fields: ['category_id'],
-        },
-        {
-          fields: ['name'],
-        },
-      ],
     }
   );
 
-  Product.associate = (models) => {
-    // Product belongs to one Category
-    Product.belongsTo(models.Category, {
-      foreignKey: 'categoryId',
-      as: 'category',
-      onDelete: 'SET NULL',
-      onUpdate: 'CASCADE',
+  Producto.associate = (models) => {
+    // Relación muchos a muchos con categorias a través de productos_categorias
+    Producto.belongsToMany(models.Categoria, {
+      through: models.ProductosCategorias,
+      foreignKey: 'id_producto',
+      otherKey: 'id_categoria',
+      as: 'categorias',
     });
-
-    // Product belongs to many Stores through ProductStock
-    Product.belongsToMany(models.Store, {
-      through: models.ProductStock,
-      foreignKey: 'productId',
-      otherKey: 'storeId',
-      as: 'stores',
+    // Relación muchos a muchos con tiendas a través de productos_stocks
+    Producto.belongsToMany(models.Tienda, {
+      through: models.ProductosStocks,
+      foreignKey: 'id_producto',
+      otherKey: 'id_tienda',
+      as: 'tiendas',
     });
-
-    // Product has many ProductStock records
-    Product.hasMany(models.ProductStock, {
-      foreignKey: 'productId',
-      as: 'productStocks',
+    // Relación uno a muchos con productos_stocks
+    Producto.hasMany(models.ProductosStocks, {
+      foreignKey: 'id_producto',
+      as: 'productosStocks',
     });
-
-    // Product belongs to many Orders through OrderProduct
-    Product.belongsToMany(models.Order, {
-      through: models.OrderProduct,
-      foreignKey: 'productId',
-      otherKey: 'orderId',
-      as: 'orders',
-    });
-
-    // Product has many OrderProduct records
-    Product.hasMany(models.OrderProduct, {
-      foreignKey: 'productId',
-      as: 'orderProducts',
+    // Relación uno a muchos con pedidos_productos
+    Producto.hasMany(models.PedidosProductos, {
+      foreignKey: 'id_producto',
+      as: 'pedidosProductos',
     });
   };
 
-  return Product;
+  return Producto;
 };

@@ -3,52 +3,41 @@
  * Represents product categories
  */
 module.exports = (sequelize, DataTypes) => {
-  const Category = sequelize.define(
-    'Category',
+  const Categoria = sequelize.define(
+    'Categoria',
     {
-      id: {
+      id_categoria: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      name: {
-        type: DataTypes.STRING,
+      nombre: {
+        type: DataTypes.STRING(30),
         allowNull: false,
-        unique: {
-          msg: 'Category name must be unique',
-        },
-        validate: {
-          notEmpty: {
-            msg: 'Category name cannot be empty',
-          },
-        },
+        unique: true,
       },
-      description: {
-        type: DataTypes.TEXT,
+      adultos: {
+        type: DataTypes.INTEGER,
         allowNull: true,
       },
     },
     {
-      tableName: 'categories',
+      tableName: 'categorias',
       timestamps: true,
       underscored: true,
-      indexes: [
-        {
-          unique: true,
-          fields: ['name'],
-        },
-      ],
     }
   );
 
-  Category.associate = (models) => {
-    // One Category has many Products
-    Category.hasMany(models.Product, {
-      foreignKey: 'categoryId',
-      as: 'products',
+  Categoria.associate = (models) => {
+    // Relación muchos a muchos con productos a través de productos_categorias
+    Categoria.belongsToMany(models.Producto, {
+      through: models.ProductosCategorias,
+      foreignKey: 'id_categoria',
+      otherKey: 'id_producto',
+      as: 'productos',
     });
   };
 
-  return Category;
+  return Categoria;
 };

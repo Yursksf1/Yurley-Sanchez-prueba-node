@@ -5,45 +5,37 @@
  */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('promotions', {
+    await queryInterface.createTable('promociones', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      name: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      description: {
-        type: Sequelize.TEXT,
+      estado: {
+        type: Sequelize.INTEGER,
         allowNull: true,
       },
-      discount_percent: {
-        type: Sequelize.DECIMAL(5, 2),
+      nombre: {
+        type: Sequelize.STRING(40),
         allowNull: false,
       },
-      start_date: {
-        type: Sequelize.DATE,
-        allowNull: false,
+      imagen: {
+        type: Sequelize.STRING(120),
+        allowNull: true,
       },
-      end_date: {
-        type: Sequelize.DATE,
-        allowNull: false,
+      porcentaje: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
       },
-      created_at: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-      updated_at: {
-        allowNull: false,
-        type: Sequelize.DATE,
+      dias_semana: {
+        type: Sequelize.STRING(21),
+        allowNull: true,
       },
     });
   },
   down: async (queryInterface) => {
-    // Drop promotions table
-    await queryInterface.dropTable('promotions');
+    // Drop promociones table
+    await queryInterface.dropTable('promociones');
   },
 }

@@ -6,34 +6,44 @@
  */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('products', {
+    await queryInterface.createTable('productos', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      name: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      description: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-      },
-      price: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: false,
-      },
-      category_id: {
+      estado: {
         type: Sequelize.INTEGER,
         allowNull: true,
-        references: {
-          model: 'categories',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
+      },
+      kit: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      barcode: {
+        type: Sequelize.STRING(30),
+        allowNull: true,
+      },
+      nombre: {
+        type: Sequelize.STRING(60),
+        allowNull: false,
+      },
+      presentacion: {
+        type: Sequelize.STRING(25),
+        allowNull: true,
+      },
+      descripcion: {
+        type: Sequelize.STRING(500),
+        allowNull: true,
+      },
+      foto: {
+        type: Sequelize.STRING(120),
+        allowNull: true,
+      },
+      peso: {
+        type: Sequelize.DECIMAL(6,2),
+        allowNull: true,
       },
       created_at: {
         allowNull: false,
@@ -46,7 +56,7 @@ module.exports = {
     });
   },
   down: async (queryInterface) => {
-    // Drop products table
-    await queryInterface.dropTable('products');
+    // Drop productos table
+    await queryInterface.dropTable('productos');
   },
 }

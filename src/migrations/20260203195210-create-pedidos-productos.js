@@ -1,8 +1,7 @@
 /**
- * Migration for creating the order_products table
- * Table: order_products (join table for orders and products)
- * Columns: id (PK), order_id (FK), product_id (FK), quantity, unit_price, subtotal, timestamps
- * FKs: order_id references orders(id) CASCADE, product_id references products(id) RESTRICT
+ * Migration for creating the pedidos_productos table
+ * Table: pedidos_productos (join entre pedidos y productos)
+ * Columns: id (PK), cantidad, valor_unitario, valor_unitario_promocion, total_teorico, total_final, id_promocion, id_producto, id_pedido
  */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -14,23 +13,23 @@ module.exports = {
         allowNull: false,
       },
       cantidad: {
-        type: Sequelize.DECIMAL(9,3),
+        type: Sequelize.DECIMAL(9,3).UNSIGNED,
         allowNull: true,
       },
       valor_unitario: {
-        type: Sequelize.DECIMAL(11,3),
+        type: Sequelize.DECIMAL(11,3).UNSIGNED,
         allowNull: true,
       },
       valor_unitario_promocion: {
-        type: Sequelize.DECIMAL(11,3),
+        type: Sequelize.DECIMAL(11,3).UNSIGNED,
         allowNull: true,
       },
       total_teorico: {
-        type: Sequelize.DECIMAL(12,3),
+        type: Sequelize.DECIMAL(12,3).UNSIGNED,
         allowNull: true,
       },
       total_final: {
-        type: Sequelize.DECIMAL(12,3),
+        type: Sequelize.DECIMAL(12,3).UNSIGNED,
         allowNull: true,
       },
       id_promocion: {

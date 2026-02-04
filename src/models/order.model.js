@@ -3,8 +3,8 @@
  * Represents customer orders
  */
 module.exports = (sequelize, DataTypes) => {
-  const Order = sequelize.define(
-    'Order',
+  const Pedido = sequelize.define(
+    'Pedido',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -12,96 +12,82 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         allowNull: false,
       },
-      orderNumber: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: {
-          msg: 'Order number must be unique',
-        },
-        validate: {
-          notEmpty: {
-            msg: 'Order number cannot be empty',
-          },
-        },
+      instrucciones: {
+        type: DataTypes.STRING(500),
+        allowNull: true,
       },
-      storeId: {
+      entrega_fecha: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      valor_productos: {
+        type: DataTypes.DECIMAL(12,3).UNSIGNED,
+        allowNull: true,
+      },
+      valor_envio: {
+        type: DataTypes.DECIMAL(10,3).UNSIGNED,
+        allowNull: true,
+      },
+      valor_descuento: {
+        type: DataTypes.DECIMAL(12,3).UNSIGNED,
+        allowNull: true,
+      },
+      valor_cupon: {
+        type: DataTypes.DECIMAL(11,3).UNSIGNED,
+        allowNull: true,
+      },
+      impuestos: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'stores',
-          key: 'id',
-        },
+        allowNull: true,
       },
-      totalAmount: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
-        validate: {
-          isDecimal: {
-            msg: 'Total amount must be a valid decimal number',
-          },
-          min: {
-            args: [0],
-            msg: 'Total amount must be greater than or equal to 0',
-          },
-        },
+      valor_final: {
+        type: DataTypes.DECIMAL(12,3).UNSIGNED,
+        allowNull: true,
       },
-      status: {
-        type: DataTypes.ENUM('pending', 'processing', 'completed', 'cancelled'),
+      calificacion: {
+        type: DataTypes.DECIMAL(3,2),
+        allowNull: true,
+      },
+      id_tienda: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      direccion: {
+        type: DataTypes.STRING(160),
+        allowNull: true,
+      },
+      valor_comision: {
+        type: DataTypes.DECIMAL(11,3),
+        allowNull: true,
+      },
+      id_user: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      created_at: {
         allowNull: false,
-        defaultValue: 'pending',
-        validate: {
-          isIn: {
-            args: [['pending', 'processing', 'completed', 'cancelled']],
-            msg: 'Status must be one of: pending, processing, completed, cancelled',
-          },
-        },
+        type: DataTypes.DATE,
       },
     },
     {
-      tableName: 'orders',
-      timestamps: true,
+      tableName: 'pedidos',
+      timestamps: false,
       underscored: true,
-      indexes: [
-        {
-          unique: true,
-          fields: ['order_number'],
-        },
-        {
-          fields: ['store_id'],
-        },
-        {
-          fields: ['status'],
-        },
-        {
-          fields: ['created_at'],
-        },
-      ],
     }
   );
 
-  Order.associate = (models) => {
-    // Order belongs to Store
-    Order.belongsTo(models.Store, {
-      foreignKey: 'storeId',
-      as: 'store',
-      onDelete: 'RESTRICT',
-      onUpdate: 'CASCADE',
+  Pedido.associate = (models) => {
+    // Relación uno a muchos con pedidos_productos
+    Pedido.hasMany(models.PedidosProductos, {
+      foreignKey: 'id_pedido',
+      as: 'pedidosProductos',
     });
-
-    // Order belongs to many Products through OrderProduct
-    Order.belongsToMany(models.Product, {
-      through: models.OrderProduct,
-      foreignKey: 'orderId',
-      otherKey: 'productId',
-      as: 'products',
-    });
-
-    // Order has many OrderProduct records
-    Order.hasMany(models.OrderProduct, {
-      foreignKey: 'orderId',
-      as: 'orderProducts',
+    // Relación muchos a uno con tienda
+    Pedido.belongsTo(models.Tienda, {
+      foreignKey: 'id_tienda',
+      as: 'tienda',
     });
   };
 
-  return Order;
+  return Pedido;
 };
