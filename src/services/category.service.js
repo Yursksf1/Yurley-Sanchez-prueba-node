@@ -16,8 +16,7 @@ class CategoryService {
         attributes: [
           'id_categoria',
           'nombre',
-          'adultos',
-          [Sequelize.fn('COUNT', Sequelize.col('productos.id')), 'productosCount']
+          [Sequelize.fn('COUNT', Sequelize.col('productos.id')), 'productos_count']
         ],
         include: [
           {
@@ -26,13 +25,18 @@ class CategoryService {
             attributes: [],
           },
         ],
-        group: ['Categoria.id_categoria', 'Categoria.nombre', 'Categoria.adultos'],
+        group: [
+          'Categoria.id_categoria',
+          'Categoria.nombre',
+          'productos->ProductosCategorias.id_categoria',
+          'productos->ProductosCategorias.id_producto'
+        ],
         having: Sequelize.where(
           Sequelize.fn('COUNT', Sequelize.col('productos.id')),
           '>',
           0
         ),
-        order: [[Sequelize.literal('productosCount'), 'DESC']],
+        order: [[Sequelize.literal('productos_count'), 'DESC']],
         subQuery: false,
       });
 
@@ -42,7 +46,7 @@ class CategoryService {
         return {
           idCategoria: plainCategoria.id_categoria,
           nombre: plainCategoria.nombre,
-          cantProductos: parseInt(plainCategoria.productosCount, 10) || 0,
+          cantProductos: parseInt(plainCategoria.productos_count, 10) || 0,
         };
       });
     } catch (error) {
