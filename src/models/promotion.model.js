@@ -65,6 +65,23 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      dias_semana: {
+        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        allowNull: false,
+        defaultValue: [],
+        validate: {
+          isValidDayArray(value) {
+            if (!Array.isArray(value)) {
+              throw new Error('dias_semana must be an array');
+            }
+            for (const day of value) {
+              if (!Number.isInteger(day) || day < 1 || day > 7) {
+                throw new Error('dias_semana must contain integers between 1 and 7 (1=Monday, 7=Sunday)');
+              }
+            }
+          },
+        },
+      },
     },
     {
       tableName: 'promotions',

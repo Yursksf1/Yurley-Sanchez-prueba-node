@@ -29,6 +29,29 @@ module.exports = (sequelize, DataTypes) => {
           key: 'id',
         },
       },
+      inicio: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        validate: {
+          isDate: {
+            msg: 'inicio must be a valid date',
+          },
+        },
+      },
+      fin: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        validate: {
+          isDate: {
+            msg: 'fin must be a valid date',
+          },
+          isAfterInicio(value) {
+            if (this.inicio && value <= this.inicio) {
+              throw new Error('fin must be after inicio');
+            }
+          },
+        },
+      },
     },
     {
       tableName: 'store_promotions',

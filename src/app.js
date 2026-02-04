@@ -3,6 +3,7 @@ const config = require('./config/env');
 const db = require('./models');
 const productRoutes = require('./routes/product.routes');
 const categoryRoutes = require('./routes/category.routes');
+const promotionRoutes = require('./routes/promotion.routes');
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.get('/', (req, res) => {
 // API routes
 app.use(productRoutes);
 app.use(categoryRoutes);
+app.use(promotionRoutes);
 
 // Start server
 const startServer = async () => {
