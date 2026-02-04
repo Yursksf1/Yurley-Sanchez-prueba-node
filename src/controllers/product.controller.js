@@ -35,6 +35,7 @@ class ProductController {
    * @param {Object} res - Express response object
    */
   async getTopSoldProducts(req, res) {
+    console.log('Received request for top sold products');
     try {
       const products = await productService.getTopSoldProducts();
       
