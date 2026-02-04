@@ -72,7 +72,8 @@ class PromotionService {
         };
       });
     } catch (error) {
-      throw new Error(`Error fetching promotions by day: ${error.message}`);
+      console.error('Error in getPromotionsByDay service:', error);
+      throw error;
     }
   }
 }

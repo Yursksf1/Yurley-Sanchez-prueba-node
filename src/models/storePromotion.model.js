@@ -46,8 +46,8 @@ module.exports = (sequelize, DataTypes) => {
             msg: 'fin must be a valid date',
           },
           isAfterInicio(value) {
-            if (this.inicio && value <= this.inicio) {
-              throw new Error('fin must be after inicio');
+            if (this.inicio && value < this.inicio) {
+              throw new Error('fin must be after or equal to inicio');
             }
           },
         },
