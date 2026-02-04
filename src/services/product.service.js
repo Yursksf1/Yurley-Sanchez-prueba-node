@@ -60,7 +60,7 @@ class ProductService {
           'id',
           'nombre',
           'presentacion',
-          [Sequelize.fn('SUM', Sequelize.col('pedidosProductos.cantidad')), 'unidadesVendidas']
+          [Sequelize.fn('SUM', Sequelize.col('pedidosProductos.cantidad')), 'unidades_vendidas']
         ],
         include: [
           {
@@ -70,7 +70,7 @@ class ProductService {
           },
         ],
         group: ['Producto.id', 'Producto.nombre', 'Producto.presentacion'],
-        order: [[Sequelize.literal('unidadesVendidas'), 'DESC']],
+        order: [[Sequelize.literal('unidades_vendidas'), 'DESC']],
         limit: 10,
         subQuery: false,
       });
@@ -81,7 +81,7 @@ class ProductService {
           idProducto: plainProducto.id,
           nombre: plainProducto.nombre,
           presentacion: plainProducto.presentacion,
-          unidadesVendidas: parseInt(plainProducto.unidadesVendidas, 10) || 0,
+          unidadesVendidas: parseInt(plainProducto.unidades_vendidas, 10) || 0,
         };
       });
     } catch (error) {
