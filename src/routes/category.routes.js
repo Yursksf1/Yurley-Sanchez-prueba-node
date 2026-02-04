@@ -1,5 +1,5 @@
 const express = require('express');
-const categoryController = require('../controllers/category.controller');
+const categoriaController = require('../controllers/category.controller');
 
 const router = express.Router();
 
@@ -8,6 +8,6 @@ const router = express.Router();
  * @desc Get categories with at least one product, ordered by product count
  * @access Public
  */
-router.get('/categories/with-products', categoryController.getCategoriesWithProducts.bind(categoryController));
+router.get('/categorias', categoriaController.getCategoriesWithProducts.bind(categoriaController));
 
 module.exports = router;

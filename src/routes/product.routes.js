@@ -1,5 +1,5 @@
 const express = require('express');
-const productController = require('../controllers/product.controller');
+const productoController = require('../controllers/product.controller');
 
 const router = express.Router();
 
@@ -8,13 +8,13 @@ const router = express.Router();
  * @desc Get top 10 best-selling products
  * @access Public
  */
-router.get('/products/top-sold', productController.getTopSoldProducts.bind(productController));
+router.get('/productos/mas-vendidos', productoController.getTopSoldProducts.bind(productoController));
 
 /**
  * @route GET /products
  * @desc Get all products with stock per store
  * @access Public
  */
-router.get('/products', productController.getProducts.bind(productController));
+router.get('/productos', productoController.getProducts.bind(productoController));
 
 module.exports = router;

@@ -44,12 +44,10 @@ class PromotionController {
       }
 
       // Fetch promotions from service
-      const promotions = await promotionService.getPromotionsByDay(dayNumber);
-
+      const promociones = await promotionService.getPromotionsByDay(dayNumber);
       res.status(200).json({
-        success: true,
-        data: promotions,
-        count: promotions.length,
+        message: "consultado correctamente",
+        data: promociones
       });
     } catch (error) {
       console.error('Error in getPromotionsByDay controller:', error);

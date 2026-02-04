@@ -1,4 +1,4 @@
-const { Product, ProductStock, Store, OrderProduct } = require('../models');
+const { Producto, ProductosStocks, Tienda, PedidosProductos } = require('../models');
 const { Sequelize } = require('sequelize');
 
 /**
@@ -12,18 +12,18 @@ class ProductService {
    */
   async getAllProductsWithStock() {
     try {
-      const products = await Product.findAll({
-        attributes: ['id', 'name', 'description', 'price'],
+      const productos = await Producto.findAll({
+        attributes: ['id', 'nombre', 'presentacion'],
         include: [
           {
-            model: ProductStock,
-            as: 'productStocks',
-            attributes: ['quantity'],
+            model: ProductosStocks,
+            as: 'productosStocks',
+            attributes: ['cantidad'],
             include: [
               {
-                model: Store,
-                as: 'store',
-                attributes: ['id', 'name', 'address'],
+                model: Tienda,
+                as: 'tienda',
+                attributes: ['id', 'nombre'],
               },
             ],
           },
@@ -31,19 +31,16 @@ class ProductService {
         order: [['id', 'ASC']],
       });
 
-      // Transform the data to a cleaner structure
-      return products.map((product) => {
-        const plainProduct = product.toJSON();
+      return productos.map((producto) => {
+        const plainProducto = producto.toJSON();
         return {
-          id: plainProduct.id,
-          name: plainProduct.name,
-          description: plainProduct.description,
-          price: plainProduct.price,
-          stores: plainProduct.productStocks.map((stock) => ({
-            storeId: stock.store.id,
-            storeName: stock.store.name,
-            storeAddress: stock.store.address,
-            quantity: stock.quantity,
+          idProducto: plainProducto.id,
+          nombre: plainProducto.nombre,
+          presentacion: plainProducto.presentacion,
+          tiendas: plainProducto.productosStocks.map((stock) => ({
+            idTienda: stock.tienda.id,
+            nombre: stock.tienda.nombre,
+            stock: stock.cantidad,
           })),
         };
       });
@@ -58,36 +55,33 @@ class ProductService {
    */
   async getTopSoldProducts() {
     try {
-      const topProducts = await Product.findAll({
+      const topProductos = await Producto.findAll({
         attributes: [
           'id',
-          'name',
-          'description',
-          'price',
-          [Sequelize.fn('SUM', Sequelize.col('orderProducts.quantity')), 'totalQuantitySold']
+          'nombre',
+          'presentacion',
+          [Sequelize.fn('SUM', Sequelize.col('pedidosProductos.cantidad')), 'unidadesVendidas']
         ],
         include: [
           {
-            model: OrderProduct,
-            as: 'orderProducts',
+            model: PedidosProductos,
+            as: 'pedidosProductos',
             attributes: [],
           },
         ],
-        group: ['Product.id', 'Product.name', 'Product.description', 'Product.price'],
-        order: [[Sequelize.literal('totalQuantitySold'), 'DESC']],
+        group: ['Producto.id', 'Producto.nombre', 'Producto.presentacion'],
+        order: [[Sequelize.literal('unidadesVendidas'), 'DESC']],
         limit: 10,
         subQuery: false,
       });
 
-      // Transform the data to a cleaner structure
-      return topProducts.map((product) => {
-        const plainProduct = product.toJSON();
+      return topProductos.map((producto) => {
+        const plainProducto = producto.toJSON();
         return {
-          id: plainProduct.id,
-          name: plainProduct.name,
-          description: plainProduct.description,
-          price: plainProduct.price,
-          totalQuantitySold: parseInt(plainProduct.totalQuantitySold, 10) || 0,
+          idProducto: plainProducto.id,
+          nombre: plainProducto.nombre,
+          presentacion: plainProducto.presentacion,
+          unidadesVendidas: parseInt(plainProducto.unidadesVendidas, 10) || 0,
         };
       });
     } catch (error) {

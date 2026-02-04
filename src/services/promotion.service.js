@@ -1,4 +1,4 @@
-const { Promotion, StorePromotion, Store } = require('../models');
+const { Promocion, TiendaPromocion, Tienda } = require('../models');
 const { Sequelize, Op } = require('sequelize');
 
 /**
@@ -18,57 +18,48 @@ class PromotionService {
       currentDate.setHours(0, 0, 0, 0); // Reset time to midnight for date comparison
 
       // Find promotions where dias_semana array contains the specified day
-      const promotions = await Promotion.findAll({
+      const promociones = await Promocion.findAll({
         where: {
           dias_semana: {
-            [Op.contains]: [day], // PostgreSQL array contains operator
+            [Op.contains]: [day],
           },
         },
-        attributes: ['id', 'name', 'description', 'discountPercent', 'dias_semana'],
+        attributes: ['id_promocion', 'nombre', 'descripcion', 'porcentaje_descuento', 'dias_semana'],
         include: [
           {
-            model: StorePromotion,
-            as: 'storePromotions',
+            model: TiendaPromocion,
+            as: 'tiendasPromocion',
             attributes: ['inicio', 'fin'],
             where: {
               inicio: {
-                [Op.lte]: currentDate, // inicio <= current date
+                [Op.lte]: currentDate,
               },
               fin: {
-                [Op.gte]: currentDate, // fin >= current date
+                [Op.gte]: currentDate,
               },
             },
-            required: false, // LEFT JOIN to include promotions even without active stores
+            required: false,
             include: [
               {
-                model: Store,
-                as: 'store',
-                attributes: ['id', 'name', 'address'],
+                model: Tienda,
+                as: 'tienda',
+                attributes: ['id_tienda', 'nombre', 'direccion'],
               },
             ],
           },
         ],
-        order: [['id', 'ASC']],
+        order: [['id_promocion', 'ASC']],
       });
 
       // Transform the data to a cleaner structure
-      return promotions.map((promotion) => {
-        const plainPromotion = promotion.toJSON();
+      return promociones.map((promocion) => {
+        const plainPromocion = promocion.toJSON();
         return {
-          id: plainPromotion.id,
-          name: plainPromotion.name,
-          description: plainPromotion.description,
-          discountPercent: parseFloat(plainPromotion.discountPercent),
-          dias_semana: plainPromotion.dias_semana,
-          stores: plainPromotion.storePromotions
-            .filter((sp) => sp.store) // Filter out any null stores
-            .map((sp) => ({
-              id: sp.store.id,
-              name: sp.store.name,
-              address: sp.store.address,
-              inicio: sp.inicio,
-              fin: sp.fin,
-            })),
+          idPromocion: plainPromocion.id_promocion,
+          nombre: plainPromocion.nombre,
+          tiendas: plainPromocion.tiendasPromocion
+            .filter((tp) => tp.tienda)
+            .map((tp) => tp.tienda.nombre),
         };
       });
     } catch (error) {

@@ -12,12 +12,10 @@ class CategoryController {
    */
   async getCategoriesWithProducts(req, res) {
     try {
-      const categories = await categoryService.getCategoriesWithProducts();
-      
+      const categorias = await categoryService.getCategoriesWithProducts();
       res.status(200).json({
-        success: true,
-        data: categories,
-        count: categories.length,
+        message: "consultado correctamente",
+        data: categorias
       });
     } catch (error) {
       console.error('Error in getCategoriesWithProducts controller:', error);

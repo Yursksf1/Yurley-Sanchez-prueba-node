@@ -1,4 +1,4 @@
-const { Category, Product } = require('../models');
+const { Categoria, Producto } = require('../models');
 const { Sequelize } = require('sequelize');
 
 /**
@@ -12,38 +12,37 @@ class CategoryService {
    */
   async getCategoriesWithProducts() {
     try {
-      const categories = await Category.findAll({
+      const categorias = await Categoria.findAll({
         attributes: [
-          'id',
-          'name',
-          'description',
-          [Sequelize.fn('COUNT', Sequelize.col('products.id')), 'productCount']
+          'id_categoria',
+          'nombre',
+          'adultos',
+          [Sequelize.fn('COUNT', Sequelize.col('productos.id')), 'productosCount']
         ],
         include: [
           {
-            model: Product,
-            as: 'products',
+            model: Producto,
+            as: 'productos',
             attributes: [],
           },
         ],
-        group: ['Category.id', 'Category.name', 'Category.description'],
+        group: ['Categoria.id_categoria', 'Categoria.nombre', 'Categoria.adultos'],
         having: Sequelize.where(
-          Sequelize.fn('COUNT', Sequelize.col('products.id')),
+          Sequelize.fn('COUNT', Sequelize.col('productos.id')),
           '>',
           0
         ),
-        order: [[Sequelize.literal('productCount'), 'DESC']],
+        order: [[Sequelize.literal('productosCount'), 'DESC']],
         subQuery: false,
       });
 
       // Transform the data to a cleaner structure
-      return categories.map((category) => {
-        const plainCategory = category.toJSON();
+      return categorias.map((categoria) => {
+        const plainCategoria = categoria.toJSON();
         return {
-          id: plainCategory.id,
-          name: plainCategory.name,
-          description: plainCategory.description,
-          productCount: parseInt(plainCategory.productCount, 10) || 0,
+          idCategoria: plainCategoria.id_categoria,
+          nombre: plainCategoria.nombre,
+          cantProductos: parseInt(plainCategoria.productosCount, 10) || 0,
         };
       });
     } catch (error) {

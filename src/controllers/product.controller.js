@@ -12,12 +12,10 @@ class ProductController {
    */
   async getProducts(req, res) {
     try {
-      const products = await productService.getAllProductsWithStock();
-      
+      const productos = await productService.getAllProductsWithStock();
       res.status(200).json({
-        success: true,
-        data: products,
-        count: products.length,
+        message: "consultado correctamente",
+        data: productos
       });
     } catch (error) {
       console.error('Error in getProducts controller:', error);
@@ -37,12 +35,10 @@ class ProductController {
   async getTopSoldProducts(req, res) {
     console.log('Received request for top sold products');
     try {
-      const products = await productService.getTopSoldProducts();
-      
+      const productos = await productService.getTopSoldProducts();
       res.status(200).json({
-        success: true,
-        data: products,
-        count: products.length,
+        message: "consultado correctamente",
+        data: productos
       });
     } catch (error) {
       console.error('Error in getTopSoldProducts controller:', error);
