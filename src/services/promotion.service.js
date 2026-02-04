@@ -1,4 +1,4 @@
-const { Promocion, TiendaPromocion, Tienda } = require('../models');
+const { Promocion, TiendasPromociones, Tienda } = require('../models');
 const { Sequelize, Op } = require('sequelize');
 
 /**
@@ -21,14 +21,14 @@ class PromotionService {
       const promociones = await Promocion.findAll({
         where: {
           dias_semana: {
-            [Op.contains]: [day],
+            [Op.like]: `%${day}%`,
           },
         },
-        attributes: ['id_promocion', 'nombre', 'descripcion', 'porcentaje_descuento', 'dias_semana'],
+        attributes: ['id', 'nombre', 'porcentaje', 'dias_semana'],
         include: [
           {
-            model: TiendaPromocion,
-            as: 'tiendasPromocion',
+            model: TiendasPromociones,
+            as: 'tiendasPromociones',
             attributes: ['inicio', 'fin'],
             where: {
               inicio: {
@@ -43,23 +43,25 @@ class PromotionService {
               {
                 model: Tienda,
                 as: 'tienda',
-                attributes: ['id_tienda', 'nombre', 'direccion'],
+                attributes: ['id', 'nombre', 'direccion'],
               },
             ],
           },
         ],
-        order: [['id_promocion', 'ASC']],
+        order: [['id', 'ASC']],
       });
 
       // Transform the data to a cleaner structure
       return promociones.map((promocion) => {
         const plainPromocion = promocion.toJSON();
         return {
-          idPromocion: plainPromocion.id_promocion,
+          idPromocion: plainPromocion.id,
           nombre: plainPromocion.nombre,
-          tiendas: plainPromocion.tiendasPromocion
-            .filter((tp) => tp.tienda)
-            .map((tp) => tp.tienda.nombre),
+          tiendas: Array.isArray(plainPromocion.tiendasPromociones)
+            ? plainPromocion.tiendasPromociones
+                .filter((tp) => tp.tienda && tp.tienda.nombre)
+                .map((tp) => tp.tienda.nombre)
+            : [],
         };
       });
     } catch (error) {

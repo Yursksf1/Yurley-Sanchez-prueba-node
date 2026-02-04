@@ -13,33 +13,30 @@ class PromotionController {
    */
   async getPromotionsByDay(req, res) {
     try {
-      const { day } = req.query;
+      // Permitir 'dia' o 'day' como parámetro
+      const dayParam = req.query.dia || req.query.day;
 
-      // Validate that day parameter is provided
-      if (!day) {
+      if (!dayParam) {
         return res.status(400).json({
           success: false,
           error: 'Bad Request',
-          message: 'Missing required query parameter: day',
+          message: 'Missing required query parameter: dia',
         });
       }
 
-      // Parse and validate day parameter
-      const dayNumber = parseInt(day, 10);
-      
+      const dayNumber = parseInt(dayParam, 10);
       if (isNaN(dayNumber)) {
         return res.status(400).json({
           success: false,
           error: 'Bad Request',
-          message: 'Invalid day parameter: must be an integer',
+          message: 'Invalid dia parameter: must be an integer',
         });
       }
-
       if (dayNumber < 1 || dayNumber > 7) {
         return res.status(400).json({
           success: false,
           error: 'Bad Request',
-          message: 'Invalid day parameter: must be between 1 (Monday) and 7 (Sunday)',
+          message: 'Invalid dia parameter: must be between 1 (Monday) and 7 (Sunday)',
         });
       }
 
