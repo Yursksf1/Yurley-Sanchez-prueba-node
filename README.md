@@ -202,27 +202,19 @@ Get all products with their stock information per store.
   "message": "consultado correctamente",
   "data": [
     {
-      "id": 95,
+      "idProducto": 95,
       "nombre": "Gaseosa postobon",
       "presentacion": "355ml",
-      "descripcion": null,
-      "barcode": null,
-      "productosStocks": [
+      "tiendas": [
         {
-          "id_tienda": 2,
-          "cantidad": 100,
-          "Tienda": {
-            "id": 2,
-            "nombre": "Mas x menos"
-          }
+          "idTienda": 2,
+          "nombre": "Mas x menos",
+          "stock": 100
         },
         {
-          "id_tienda": 4,
-          "cantidad": 250,
-          "Tienda": {
-            "id": 4,
-            "nombre": "Exito"
-          }
+          "idTienda": 4,
+          "nombre": "Exito",
+          "stock": 250
         }
       ]
     }
@@ -239,10 +231,10 @@ Get the top 10 best-selling products based on order history.
   "message": "consultado correctamente",
   "data": [
     {
-      "id": 95,
+      "idProducto": 95,
       "nombre": "Gaseosa postobon",
       "presentacion": "355ml",
-      "total_vendido": 150
+      "unidadesVendidas": 150
     }
   ]
 }
@@ -251,7 +243,7 @@ Get the top 10 best-selling products based on order history.
 ### Categories
 
 #### GET `/categorias`
-Get all categories that have at least one product, ordered by number of products.
+Get all categories that have at least one product, ordered by number of products (descending).
 
 **Response:**
 ```json
@@ -259,16 +251,14 @@ Get all categories that have at least one product, ordered by number of products
   "message": "consultado correctamente",
   "data": [
     {
-      "id_categoria": 18,
+      "idCategoria": 18,
       "nombre": "Bebidas",
-      "adultos": 0,
-      "producto_count": 5
+      "cantProductos": 5
     },
     {
-      "id_categoria": 12,
+      "idCategoria": 12,
       "nombre": "Frutas y verduras",
-      "adultos": 0,
-      "producto_count": 3
+      "cantProductos": 3
     }
   ]
 }
@@ -277,7 +267,7 @@ Get all categories that have at least one product, ordered by number of products
 ### Promotions
 
 #### GET `/promociones?dia={day}`
-Get promotions applicable for a specific day of the week.
+Get promotions applicable for a specific day of the week and currently active in stores.
 
 **Query Parameters:**
 - `dia` or `day` (required): Day of the week as integer (1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday, 7=Sunday)
@@ -290,25 +280,20 @@ Get promotions applicable for a specific day of the week.
   "message": "consultado correctamente",
   "data": [
     {
-      "id": 1,
+      "idPromocion": 1,
       "nombre": "Miercoles Felices",
-      "porcentaje": 10,
-      "dias_semana": "3",
-      "TiendasPromociones": [
-        {
-          "id_tienda": 2,
-          "Tienda": {
-            "id": 2,
-            "nombre": "Mas x menos"
-          }
-        },
-        {
-          "id_tienda": 4,
-          "Tienda": {
-            "id": 4,
-            "nombre": "Exito"
-          }
-        }
+      "tiendas": [
+        "Mas x menos",
+        "Exito",
+        "D1"
+      ]
+    },
+    {
+      "idPromocion": 5,
+      "nombre": "Miercoles de 2x1",
+      "tiendas": [
+        "Dolar city",
+        "D1"
       ]
     }
   ]
